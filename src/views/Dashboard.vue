@@ -160,8 +160,8 @@
               <FileText class="w-6 h-6 text-blue-600" />
             </div>
             <div class="ml-4">
-              <h3 class="text-sm font-medium text-gray-500">Total Leave Applications</h3>
-              <p class="text-2xl font-semibold text-gray-900">{{ totalApplications }}</p>
+              <h3 class="text-sm font-medium text-gray-500">Leaves Filed This Year</h3>
+              <p class="text-2xl font-semibold text-gray-900">{{ annualLeavesFiled }}</p>
             </div>
           </div>
         </div>
@@ -172,20 +172,20 @@
               <CheckCircle class="w-6 h-6 text-green-600" />
             </div>
             <div class="ml-4">
-              <h3 class="text-sm font-medium text-gray-500">Approved Applications</h3>
-              <p class="text-2xl font-semibold text-gray-900">{{ approvedApplications }}</p>
+              <h3 class="text-sm font-medium text-gray-500">Leave Credits</h3>
+              <p class="text-2xl font-semibold text-gray-900">{{ leaveCredits }} days</p>
             </div>
           </div>
         </div>
         
         <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6">
           <div class="flex items-center">
-            <div class="p-3 bg-yellow-100 rounded-lg">
-              <Clock class="w-6 h-6 text-yellow-600" />
+            <div class="p-3 bg-red-100 rounded-lg">
+              <AlertCircle class="w-6 h-6 text-red-600" />
             </div>
             <div class="ml-4">
-              <h3 class="text-sm font-medium text-gray-500">Pending Applications</h3>
-              <p class="text-2xl font-semibold text-gray-900">{{ pendingApplications }}</p>
+              <h3 class="text-sm font-medium text-gray-500">Absences This Year</h3>
+              <p class="text-2xl font-semibold text-gray-900">{{ annualAbsences }}</p>
             </div>
           </div>
         </div>
@@ -196,175 +196,67 @@
               <Calendar class="w-6 h-6 text-purple-600" />
             </div>
             <div class="ml-4">
-              <h3 class="text-sm font-medium text-gray-500">Leave Balance</h3>
-              <p class="text-2xl font-semibold text-gray-900">{{ leaveBalance }} days</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6">
-          <div class="flex items-center">
-            <div class="p-3 bg-orange-100 rounded-lg">
-              <TrendingUp class="w-6 h-6 text-orange-600" />
-            </div>
-            <div class="ml-4">
-              <h3 class="text-sm font-medium text-gray-500">Attendance Rate</h3>
-              <p class="text-2xl font-semibold text-gray-900">{{ attendanceRate }}%</p>
+              <h3 class="text-sm font-medium text-gray-500">Most Common Leave Type</h3>
+              <p class="text-2xl font-semibold text-gray-900">{{ mostCommonLeaveType }}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Application History Section -->
-      <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-800">Application History</h3>
-        </div>
-        <div class="p-6">
-          <div class="space-y-4">
-            <div class="flex items-center justify-between py-3 border-b border-gray-100">
-              <div class="flex items-center">
-                <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">Vacation Leave - Baguio City</p>
-                  <p class="text-xs text-gray-500">May 15-17, 2024 • Approved</p>
-                </div>
+      <!-- Leave Type Breakdown -->
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Leave Types Filed This Year</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div v-for="leaveType in leaveTypesBreakdown" :key="leaveType.type" class="bg-gray-50 rounded-lg p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-gray-900">{{ leaveType.type }}</p>
+                <p class="text-xs text-gray-500">{{ leaveType.count }} applications</p>
               </div>
-              <span class="text-xs text-gray-500">2 days ago</span>
-            </div>
-            
-            <div class="flex items-center justify-between py-3 border-b border-gray-100">
-              <div class="flex items-center">
-                <div class="w-2 h-2 bg-yellow-500 rounded-full mr-3"></div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">Sick Leave</p>
-                  <p class="text-xs text-gray-500">Apr 5-6, 2024 • Pending</p>
-                </div>
-              </div>
-              <span class="text-xs text-gray-500">1 week ago</span>
-            </div>
-            
-            <div class="flex items-center justify-between py-3">
-              <div class="flex items-center">
-                <div class="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">Personal Leave</p>
-                  <p class="text-xs text-gray-500">Mar 10, 2024 • Approved</p>
-                </div>
-              </div>
-              <span class="text-xs text-gray-500">2 weeks ago</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Personal Attendance Monitoring -->
-      <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-800">Personal Attendance Monitoring</h3>
-        </div>
-        <div class="p-6">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="text-center">
-              <h4 class="text-sm font-medium text-gray-600 mb-2">This Month</h4>
-              <p class="text-2xl font-bold text-green-600">22</p>
-              <p class="text-xs text-gray-500">Days Present</p>
-            </div>
-            <div class="text-center">
-              <h4 class="text-sm font-medium text-gray-600 mb-2">This Month</h4>
-              <p class="text-2xl font-bold text-yellow-600">2</p>
-              <p class="text-xs text-gray-500">Days Late</p>
-            </div>
-            <div class="text-center">
-              <h4 class="text-sm font-medium text-gray-600 mb-2">This Month</h4>
-              <p class="text-2xl font-bold text-red-600">1</p>
-              <p class="text-xs text-gray-500">Day Absent</p>
-            </div>
-          </div>
-          
-          <div class="mt-6">
-            <h4 class="text-sm font-medium text-gray-700 mb-3">Recent Attendance</h4>
-            <div class="space-y-2">
-              <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                <div>
-                  <p class="text-sm font-medium text-gray-900">May 8, 2024</p>
-                  <p class="text-xs text-gray-500">Present • On Time</p>
-                </div>
-                <span class="px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">Present</span>
-              </div>
-              <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                <div>
-                  <p class="text-sm font-medium text-gray-900">May 7, 2024</p>
-                  <p class="text-xs text-gray-500">Present • 15 mins Late</p>
-                </div>
-                <span class="px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-100 rounded-full">Late</span>
-              </div>
-              <div class="flex items-center justify-between py-2">
-                <div>
-                  <p class="text-sm font-medium text-gray-900">May 6, 2024</p>
-                  <p class="text-xs text-gray-500">Absent • Sick Leave</p>
-                </div>
-                <span class="px-2 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full">Absent</span>
+              <div class="w-12 h-12 rounded-full flex items-center justify-center" :class="leaveType.colorClass">
+                <span class="text-white font-semibold">{{ leaveType.count }}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Charts Section -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Active Users Chart -->
-        <div class="bg-white rounded-xl shadow-sm p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-4">Active Users</h3>
-          <canvas ref="activeUsersChart" class="h-64"></canvas>
-        </div>
-        
-        <!-- Quarterly Sales Chart -->
-        <div class="bg-white rounded-xl shadow-sm p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-4">Leave Applications by Quarter</h3>
-          <canvas ref="quarterlyChart" class="h-64"></canvas>
+      <!-- Leave Credits Breakdown -->
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Leave Credits Breakdown</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-blue-50 rounded-lg p-4">
+            <p class="text-sm text-gray-500">Vacation Leave</p>
+            <p class="text-2xl font-bold text-blue-800">{{ leaveCreditsBreakdown.vacation }} days</p>
+          </div>
+          <div class="bg-green-50 rounded-lg p-4">
+            <p class="text-sm text-gray-500">Sick Leave</p>
+            <p class="text-2xl font-bold text-green-800">{{ leaveCreditsBreakdown.sick }} days</p>
+          </div>
+          <div class="bg-purple-50 rounded-lg p-4">
+            <p class="text-sm text-gray-500">Maternity Leave</p>
+            <p class="text-2xl font-bold text-purple-800">{{ leaveCreditsBreakdown.maternity }} days</p>
+          </div>
+          <div class="bg-orange-50 rounded-lg p-4">
+            <p class="text-sm text-gray-500">Paternity Leave</p>
+            <p class="text-2xl font-bold text-orange-800">{{ leaveCreditsBreakdown.paternity }} days</p>
+          </div>
         </div>
       </div>
 
-      <!-- Recent Activities -->
-      <div class="bg-white rounded-xl shadow-sm">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-800">Recent Activities</h3>
-        </div>
-        <div class="p-6">
-          <div class="space-y-4">
-            <div class="flex items-center justify-between py-3 border-b border-gray-100">
-              <div class="flex items-center">
-                <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">John Smith - Leave Approved</p>
-                  <p class="text-xs text-gray-500">Sick Leave - 2 days</p>
-                </div>
+      <!-- Absence History -->
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Absence History This Year</h3>
+        <div class="space-y-3">
+          <div v-for="(absence, index) in absenceHistory" :key="index" class="flex items-center justify-between p-3 bg-gray-50 rounded">
+            <div class="flex items-center">
+              <div class="w-2 h-2 rounded-full mr-3" :class="absence.colorClass"></div>
+              <div>
+                <p class="text-sm font-medium text-gray-900">{{ absence.date }}</p>
+                <p class="text-xs text-gray-500">{{ absence.reason }}</p>
               </div>
-              <span class="text-xs text-gray-500">2 hours ago</span>
             </div>
-            
-            <div class="flex items-center justify-between py-3 border-b border-gray-100">
-              <div class="flex items-center">
-                <div class="w-2 h-2 bg-yellow-500 rounded-full mr-3"></div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">Sarah Johnson - Leave Pending</p>
-                  <p class="text-xs text-gray-500">Vacation Leave - 5 days</p>
-                </div>
-              </div>
-              <span class="text-xs text-gray-500">4 hours ago</span>
-            </div>
-            
-            <div class="flex items-center justify-between py-3">
-              <div class="flex items-center">
-                <div class="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">Mike Davis - Leave Rejected</p>
-                  <p class="text-xs text-gray-500">Personal Leave - 1 day</p>
-                </div>
-              </div>
-              <span class="text-xs text-gray-500">6 hours ago</span>
-            </div>
+            <span class="text-xs text-gray-500">{{ absence.duration }}</span>
           </div>
         </div>
       </div>
@@ -412,7 +304,7 @@ ChartJS.register(
 )
 
 const router = useRouter()
-const userRole = ref<'ADAS' | 'Faculty'>('ADAS')
+const userRole = ref<'ADAS' | 'Faculty'>(localStorage.getItem('userRole') === 'ADAS' ? 'ADAS' : 'Faculty')
 
 const activeUsersChart = ref<HTMLCanvasElement>()
 const quarterlyChart = ref<HTMLCanvasElement>()
@@ -600,15 +492,38 @@ const navigateToLeaves = () => {
 
 // Admin Dashboard Properties
 const totalFaculty = ref(45)
+const pendingApplications = ref(12)
 const onLeaveToday = ref(8)
 const absentToday = ref(3)
 
 // Faculty Dashboard Properties
-const totalApplications = ref(8)
-const approvedApplications = ref(5)
-const pendingApplications = ref(2)
-const leaveBalance = ref(12)
-const attendanceRate = ref(95)
+const annualLeavesFiled = ref(8)
+const leaveCredits = ref(15)
+const annualAbsences = ref(3)
+const mostCommonLeaveType = ref('Vacation')
+
+// Leave Types Breakdown
+const leaveTypesBreakdown = ref([
+  { type: 'Vacation Leave', count: 4, colorClass: 'bg-blue-500' },
+  { type: 'Sick Leave', count: 2, colorClass: 'bg-green-500' },
+  { type: 'Personal Leave', count: 1, colorClass: 'bg-purple-500' },
+  { type: 'Emergency Leave', count: 1, colorClass: 'bg-red-500' }
+])
+
+// Leave Credits Breakdown
+const leaveCreditsBreakdown = ref({
+  vacation: 10,
+  sick: 3,
+  maternity: 1,
+  paternity: 1
+})
+
+// Absence History
+const absenceHistory = ref([
+  { date: 'May 6, 2024', reason: 'Medical Appointment', duration: '1 day', colorClass: 'bg-yellow-500' },
+  { date: 'April 15, 2024', reason: 'Family Emergency', duration: '1 day', colorClass: 'bg-red-500' },
+  { date: 'March 22, 2024', reason: 'Sick Leave', duration: '1 day', colorClass: 'bg-yellow-500' }
+])
 
 // Admin Dashboard Data
 const recentApplications = ref([
