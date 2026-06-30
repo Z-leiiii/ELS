@@ -69,6 +69,11 @@
           Settings
         </router-link>
 
+        <router-link v-if="userRole === 'ADAS'" to="/faculty-mood-ratings" class="nav-item">
+          <Smile class="icon" />
+          Faculty Mood Ratings
+        </router-link>
+
         <button @click="logout" class="nav-item text-red-600 w-full">
           <LogOut class="icon" />
           Logout
@@ -138,7 +143,8 @@ import {
   Bell,
   LogOut,
   Menu,
-  X
+  X,
+  Smile
 } from 'lucide-vue-next'
 
 const route = useRoute()
@@ -162,7 +168,8 @@ const pageTitle = computed(() => {
     '/my-applications': 'My Applications',
     '/records': 'Records',
     '/reports': 'Reports',
-    '/settings': 'Settings'
+    '/settings': 'Settings',
+    '/faculty-mood-ratings': 'Faculty Mood Ratings'
   }
   return titles[route.path] || 'Dashboard'
 })

@@ -152,6 +152,75 @@
 
     <!-- Faculty Dashboard -->
     <div v-else class="space-y-6">
+      <!-- Mood Rating Section -->
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">How are you feeling today?</h3>
+        
+        <!-- Rating Options -->
+        <div class="flex justify-center gap-4 mb-6">
+          <button
+            v-for="option in moodOptions"
+            :key="option.value"
+            @click="submitMoodRating(option.value)"
+            :class="[
+              'flex flex-col items-center p-4 rounded-xl transition-all duration-200 hover:scale-110',
+              userMoodRating === option.value ? 'ring-4 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
+            ]"
+            :disabled="hasRatedToday"
+          >
+            <span class="text-5xl mb-2 filter drop-shadow-lg saturate-200 brightness-125 hue-rotate-10">{{ option.emoji }}</span>
+            <span class="text-xs text-center text-gray-600 font-medium">{{ option.label }}</span>
+          </button>
+        </div>
+
+        <!-- User's Current Rating -->
+        <div v-if="userMoodRating" class="text-center text-sm text-gray-500 mb-4">
+          <span>You rated: </span>
+          <span class="font-semibold">{{ moodOptions.find(m => m.value === userMoodRating)?.label }}</span>
+          <span class="ml-2">({{ moodOptions.find(m => m.value === userMoodRating)?.emoji }})</span>
+        </div>
+
+        <!-- Faculty Mood Overview -->
+        <div class="border-t pt-4">
+          <h4 class="text-sm font-medium text-gray-700 mb-3">Faculty Mood Overview</h4>
+          
+          <!-- Rating Counts -->
+          <div class="grid grid-cols-5 gap-2 mb-4">
+            <div
+              v-for="option in moodOptions"
+              :key="option.value"
+              class="text-center p-2 rounded-lg bg-gray-50"
+            >
+              <span class="text-3xl filter drop-shadow-md saturate-200 brightness-125 hue-rotate-10">{{ option.emoji }}</span>
+              <p class="text-lg font-bold text-gray-900">{{ getMoodCount(option.value) }}</p>
+              <p class="text-xs text-gray-500">{{ option.label.split(' ')[0] }}</p>
+            </div>
+          </div>
+
+          <!-- Recent Ratings -->
+          <div v-if="recentMoodRatings.length > 0" class="mt-4">
+            <h5 class="text-xs font-medium text-gray-500 mb-2">Recent Ratings</h5>
+            <div class="space-y-2 max-h-32 overflow-y-auto">
+              <div
+                v-for="rating in recentMoodRatings.slice(0, 5)"
+                :key="rating.id"
+                class="flex items-center justify-between text-sm p-2 bg-gray-50 rounded"
+              >
+                <div class="flex items-center">
+                  <span class="text-xl mr-2">{{ moodOptions.find(m => m.value === rating.mood)?.emoji }}</span>
+                  <span class="text-gray-700">{{ rating.userName }}</span>
+                </div>
+                <span class="text-xs text-gray-400">{{ formatTime(rating.timestamp) }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div v-else class="text-center text-sm text-gray-400 mt-4">
+            No ratings yet. Be the first to share how you're feeling!
+          </div>
+        </div>
+      </div>
+
       <!-- Personal Leave Metrics -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6">
@@ -305,6 +374,88 @@ ChartJS.register(
 
 const router = useRouter()
 const userRole = ref<'ADAS' | 'Faculty'>(localStorage.getItem('userRole') === 'ADAS' ? 'ADAS' : 'Faculty')
+
+// Mood Rating Types
+interface MoodRating {
+  id: string
+  userId: string
+  userName: string
+  mood: number
+  timestamp: number
+}
+
+// Mood Rating Options
+const moodOptions = [
+  { value: 5, emoji: '😊', label: 'I am very happy' },
+  { value: 4, emoji: '🙂', label: 'I am ok' },
+  { value: 3, emoji: '😐', label: 'Just fine' },
+  { value: 2, emoji: '😟', label: 'I am stressed' },
+  { value: 1, emoji: '😢', label: 'I am very stressed' }
+]
+
+// Mood Rating State
+const userMoodRating = ref<number | null>(null)
+const recentMoodRatings = ref<MoodRating[]>([])
+const currentUserId = ref<string>(localStorage.getItem('userId') || 'user-' + Date.now())
+
+// Check if user has rated today
+const hasRatedToday = ref(false)
+
+// Load mood ratings from localStorage
+const loadMoodRatings = () => {
+  const stored = localStorage.getItem('moodRatings')
+  if (stored) {
+    recentMoodRatings.value = JSON.parse(stored)
+  }
+  
+  // Check if current user has rated today
+  const today = new Date().toDateString()
+  const userRating = recentMoodRatings.value.find(
+    r => r.userId === currentUserId.value && new Date(r.timestamp).toDateString() === today
+  )
+  
+  if (userRating) {
+    userMoodRating.value = userRating.mood
+    hasRatedToday.value = true
+  } else {
+    hasRatedToday.value = false
+  }
+}
+
+// Submit mood rating
+const submitMoodRating = (mood: number) => {
+  if (hasRatedToday.value) return
+  
+  const newRating: MoodRating = {
+    id: Date.now().toString(),
+    userId: currentUserId.value,
+    userName: localStorage.getItem('userName') || 'Faculty Member',
+    mood,
+    timestamp: Date.now()
+  }
+  
+  recentMoodRatings.value.unshift(newRating)
+  localStorage.setItem('moodRatings', JSON.stringify(recentMoodRatings.value))
+  
+  userMoodRating.value = mood
+  hasRatedToday.value = true
+}
+
+// Get count for specific mood
+const getMoodCount = (moodValue: number) => {
+  return recentMoodRatings.value.filter(r => r.mood === moodValue).length
+}
+
+// Format timestamp
+const formatTime = (timestamp: number) => {
+  const now = Date.now()
+  const diff = now - timestamp
+  
+  if (diff < 60000) return 'Just now'
+  if (diff < 3600000) return `${Math.floor(diff / 60000)} min ago`
+  if (diff < 86400000) return `${Math.floor(diff / 3600000)} hours ago`
+  return `${Math.floor(diff / 86400000)} days ago`
+}
 
 const activeUsersChart = ref<HTMLCanvasElement>()
 const quarterlyChart = ref<HTMLCanvasElement>()
@@ -562,6 +713,9 @@ const departmentStats = ref([
 
 onMounted(async () => {
   await nextTick()
+  
+  // Load mood ratings
+  loadMoodRatings()
   
   if (userRole.value === 'ADAS') {
     // Active Users Chart

@@ -56,6 +56,11 @@ const router = createRouter({
           path: '/settings',
           name: 'settings',
           component: () => import('../views/Settings.vue')
+        },
+        {
+          path: '/faculty-mood-ratings',
+          name: 'faculty-mood-ratings',
+          component: () => import('../views/FacultyMoodRatings.vue')
         }
       ]
     },
